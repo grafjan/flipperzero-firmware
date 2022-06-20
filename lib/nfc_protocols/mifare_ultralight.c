@@ -1,4 +1,5 @@
 #include <limits.h>
+#include "nfc_common.h"
 #include "mifare_ultralight.h"
 #include <furi.h>
 #include <m-string.h>
@@ -801,7 +802,7 @@ bool mf_ul_prepare_emulation_response(
             // Send ACK message
             buff_tx[0] = 0x0A;
             tx_bits = 4;
-            *data_type = FURI_HAL_NFC_TXRX_RAW;
+            *data_type = NFC_TXRX_RAW;
             command_parsed = true;
         }
         emulator->comp_write_cmd_started = false;
@@ -818,7 +819,7 @@ bool mf_ul_prepare_emulation_response(
         if(emulator->data.type != MfUltralightTypeUnknown) {
             tx_bytes = sizeof(emulator->data.version);
             memcpy(buff_tx, &emulator->data.version, tx_bytes);
-            *data_type = FURI_HAL_NFC_TXRX_DEFAULT;
+            *data_type = NFC_TXRX_DEFAULT;
             command_parsed = true;
         }
     } else if(cmd == MF_UL_READ_CMD) {
@@ -837,7 +838,7 @@ bool mf_ul_prepare_emulation_response(
                 }
                 mf_ul_protect_auth_data_on_read_command(
                     buff_tx, start_page, (start_page + 4), emulator);
-                *data_type = FURI_HAL_NFC_TXRX_DEFAULT;
+                *data_type = NFC_TXRX_DEFAULT;
                 command_parsed = true;
             }
         } else {
@@ -871,7 +872,7 @@ bool mf_ul_prepare_emulation_response(
                         memcpy(&buff_tx[12], &emulator->data.data[(start_page + 1) * 4], 4);
                     mf_ul_protect_auth_data_on_read_command_i2c(
                         buff_tx, start_page, start_page + copy_count / 4 - 1, emulator);
-                    *data_type = FURI_HAL_NFC_TXRX_DEFAULT;
+                    *data_type = NFC_TXRX_DEFAULT;
                     command_parsed = true;
                 }
             } else {
@@ -887,7 +888,7 @@ bool mf_ul_prepare_emulation_response(
                     // the read out, while if you read the mirrored session registers,
                     // it returns both session registers on either pages
                     memset(buff_tx, 0, tx_bytes);
-                    *data_type = FURI_HAL_NFC_TXRX_DEFAULT;
+                    *data_type = NFC_TXRX_DEFAULT;
                     command_parsed = true;
                     emulator->ntag_i2c_plus_sector3_lockout = true;
                 }
@@ -905,7 +906,7 @@ bool mf_ul_prepare_emulation_response(
                         memcpy(buff_tx, &emulator->data.data[start_page * 4], tx_bytes);
                         mf_ul_protect_auth_data_on_read_command(
                             buff_tx, start_page, end_page, emulator);
-                        *data_type = FURI_HAL_NFC_TXRX_DEFAULT;
+                        *data_type = NFC_TXRX_DEFAULT;
                         command_parsed = true;
                     }
                 } else {
@@ -923,7 +924,7 @@ bool mf_ul_prepare_emulation_response(
                                 buff_tx, buff_rx[1], buff_rx[2], emulator);
                             mf_ul_protect_auth_data_on_read_command_i2c(
                                 buff_tx, start_page, start_page + copy_count / 4 - 1, emulator);
-                            *data_type = FURI_HAL_NFC_TXRX_DEFAULT;
+                            *data_type = NFC_TXRX_DEFAULT;
                             command_parsed = true;
                         }
                     }
@@ -965,7 +966,7 @@ bool mf_ul_prepare_emulation_response(
                 // ACK
                 buff_tx[0] = 0x0A;
                 tx_bits = 4;
-                *data_type = FURI_HAL_NFC_TXRX_RAW;
+                *data_type = NFC_TXRX_RAW;
                 command_parsed = true;
             }
         }
@@ -977,7 +978,7 @@ bool mf_ul_prepare_emulation_response(
                 buff_tx[1] = emulator->data.counter[cnt_num] >> 8;
                 buff_tx[2] = emulator->data.counter[cnt_num];
                 tx_bytes = 3;
-                *data_type = FURI_HAL_NFC_TXRX_DEFAULT;
+                *data_type = NFC_TXRX_DEFAULT;
                 command_parsed = true;
             }
         }
@@ -991,7 +992,7 @@ bool mf_ul_prepare_emulation_response(
                 // ACK
                 buff_tx[0] = 0x0A;
                 tx_bits = 4;
-                *data_type = FURI_HAL_NFC_TXRX_RAW;
+                *data_type = NFC_TXRX_RAW;
                 command_parsed = true;
             }
         }
@@ -1003,14 +1004,14 @@ bool mf_ul_prepare_emulation_response(
                 buff_tx[0] = emulator->auth_data->pack.raw[0];
                 buff_tx[1] = emulator->auth_data->pack.raw[1];
                 tx_bytes = 2;
-                *data_type = FURI_HAL_NFC_TXRX_DEFAULT;
+                *data_type = NFC_TXRX_DEFAULT;
                 emulator->auth_success = true;
                 command_parsed = true;
             } else if(!emulator->auth_data->pack.value) {
                 buff_tx[0] = 0x80;
                 buff_tx[1] = 0x80;
                 tx_bytes = 2;
-                *data_type = FURI_HAL_NFC_TXRX_DEFAULT;
+                *data_type = NFC_TXRX_DEFAULT;
                 command_parsed = true;
             }
         }
@@ -1021,7 +1022,7 @@ bool mf_ul_prepare_emulation_response(
             if(buff_rx[1] == 0x00) {
                 tx_bytes = sizeof(emulator->data.signature);
                 memcpy(buff_tx, emulator->data.signature, tx_bytes);
-                *data_type = FURI_HAL_NFC_TXRX_DEFAULT;
+                *data_type = NFC_TXRX_DEFAULT;
                 command_parsed = true;
             }
         }
@@ -1031,7 +1032,7 @@ bool mf_ul_prepare_emulation_response(
             if(cnt_num < 3) {
                 buff_tx[0] = emulator->data.tearing[cnt_num];
                 tx_bytes = 1;
-                *data_type = FURI_HAL_NFC_TXRX_DEFAULT;
+                *data_type = NFC_TXRX_DEFAULT;
                 command_parsed = true;
             }
         }
@@ -1057,16 +1058,16 @@ bool mf_ul_prepare_emulation_response(
         // Send NACK
         buff_tx[0] = 0x00;
         tx_bits = 4;
-        *data_type = FURI_HAL_NFC_TX_RAW_RX_DEFAULT;
+        *data_type = NFC_TX_RAW_RX_DEFAULT;
     } else if(send_ack) {
         buff_tx[0] = 0x0A;
         tx_bits = 4;
-        *data_type = FURI_HAL_NFC_TX_RAW_RX_DEFAULT;
+        *data_type = NFC_TX_RAW_RX_DEFAULT;
     }
 
     if(respond_nothing) {
         *buff_tx_len = UINT16_MAX;
-        *data_type = FURI_HAL_NFC_TX_RAW_RX_DEFAULT;
+        *data_type = NFC_TX_RAW_RX_DEFAULT;
     } else {
         // Return tx buffer size in bits
         if(tx_bytes) {
