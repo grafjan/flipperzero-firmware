@@ -10,6 +10,7 @@
 #define SCENE_EVENT_SELECT_AUTO_LOCK_DELAY 3
 
 #define AUTO_LOCK_DELAY_COUNT 6
+#define BATTERY_VIEW_COUNT 3
 const char* const auto_lock_delay_text[AUTO_LOCK_DELAY_COUNT] = {
     "OFF",
     "30s",
@@ -18,9 +19,17 @@ const char* const auto_lock_delay_text[AUTO_LOCK_DELAY_COUNT] = {
     "5min",
     "10min",
 };
+const char* const battery_view_count_text[BATTERY_VIEW_COUNT] = {
+    "Bar",
+    "%", 
+    "Inv. %",
+};
 
 const uint32_t auto_lock_delay_value[AUTO_LOCK_DELAY_COUNT] =
     {0, 30000, 60000, 120000, 300000, 600000};
+
+const uint32_t displayBatteryPercentage_value[BATTERY_VIEW_COUNT] =
+    {0, 1, 2};
 
 static void desktop_settings_scene_start_var_list_enter_callback(void* context, uint32_t index) {
     DesktopSettingsApp* app = context;
@@ -33,6 +42,14 @@ static void desktop_settings_scene_start_auto_lock_delay_changed(VariableItem* i
 
     variable_item_set_current_value_text(item, auto_lock_delay_text[index]);
     app->settings.auto_lock_delay_ms = auto_lock_delay_value[index];
+}
+
+static void desktop_settings_scene_start_battery_view_changed(VariableItem* item) {
+    DesktopSettingsApp* app = variable_item_get_context(item);
+    uint8_t index = variable_item_get_current_value_index(item);
+
+    variable_item_set_current_value_text(item, battery_view_count_text[index]);
+    app->settings.displayBatteryPercentage = index;
 }
 
 void desktop_settings_scene_start_on_enter(void* context) {
@@ -61,6 +78,18 @@ void desktop_settings_scene_start_on_enter(void* context) {
         app->settings.auto_lock_delay_ms, auto_lock_delay_value, AUTO_LOCK_DELAY_COUNT);
     variable_item_set_current_value_index(item, value_index);
     variable_item_set_current_value_text(item, auto_lock_delay_text[value_index]);
+
+    item = variable_item_list_add(
+        variable_item_list, 
+        "Battery View", 
+        BATTERY_VIEW_COUNT, 
+        desktop_settings_scene_start_battery_view_changed, 
+        app);
+
+    value_index = value_index_uint32(
+        app->settings.displayBatteryPercentage, displayBatteryPercentage_value, BATTERY_VIEW_COUNT);
+    variable_item_set_current_value_index(item, value_index);
+    variable_item_set_current_value_text(item, battery_view_count_text[value_index]);
 
     view_dispatcher_switch_to_view(app->view_dispatcher, DesktopSettingsAppViewVarItemList);
 }
