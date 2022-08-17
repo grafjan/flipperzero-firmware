@@ -1,6 +1,6 @@
 This is a UPC-A Barcode generator for the flipper zero hardware.
 
-<img src=https://i.imgur.com/bMSAiuK.png>
+<img src=https://i.imgur.com/2F3g6Mu.png>
 
 It will eventually be expanded in to other barcode types. It currently only generates UPC-A type barcodes.
 
