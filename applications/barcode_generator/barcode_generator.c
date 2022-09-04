@@ -26,206 +26,49 @@ typedef struct {
     bool doParityCalculation; //Should do parity check?
 } PluginState;
 
-void number_0(
-    Canvas* canvas,
-    bool rightHand,
-    int startingPosition) { //UPC Code for #0 on left is OOOIIOI
-    canvas_set_color(canvas, ColorBlack);
-    canvas_draw_str(
-        canvas, startingPosition, BARCODE_Y_START + BARCODE_HEIGHT + BARCODE_TEXT_OFFSET, "0");
-    if(rightHand) {
-        canvas_set_color(canvas, ColorBlack);
-    } else {
-        canvas_set_color(canvas, ColorWhite);
-    }
-    canvas_draw_box(canvas, startingPosition, BARCODE_Y_START, 3, BARCODE_HEIGHT); //OOO
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 3, BARCODE_Y_START, 2, BARCODE_HEIGHT); //II
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 5, BARCODE_Y_START, 1, BARCODE_HEIGHT); //O
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 6, BARCODE_Y_START, 1, BARCODE_HEIGHT); //I
-}
-void number_1(
-    Canvas* canvas,
-    bool rightHand,
-    int startingPosition) { //UPC Code for #1 on left is OOIIOOI
-    canvas_set_color(canvas, ColorBlack);
-    canvas_draw_str(
-        canvas, startingPosition, BARCODE_Y_START + BARCODE_HEIGHT + BARCODE_TEXT_OFFSET, "1");
+int number_dict = {
+    //number: [[cumulatedSumOfDigits], [digitWidth]]
+    [[3, 5, 6], [3, 2, 1, 1]], //UPC Code for #0 on left is OOOIIOI
+    [[2, 4, 6], [2, 2, 2, 1]], //UPC Code for #1 on left is OOIIOOI
+    [[2, 3, 5], [2, 1, 2, 2]], //UPC Code for #2 on left is OOIOOII
+    [[1, 5, 6], [1, 4, 1, 1]], //UPC Code for #3 on left is OIIIIOI
+    [[1, 2, 5], [1, 1, 3, 2]], //UPC Code for #4 on left is OIOOOII
+    [[1, 3, 6], [1, 2, 3, 1]], //UPC Code for #5 on left is OIIOOOI
+    [[1, 2, 3], [1, 1, 1, 4]], //UPC Code for #6 on left is OIOIIII
+    [[1, 4, 5], [1, 3, 1, 2]], //UPC Code for #7 on left is OIIIOII
+    [[1, 3, 4], [1, 2, 1, 3]], //UPC Code for #8 on left is OIIOIII
+    [[3, 4, 5], [3, 1, 1, 2]], //UPC Code for #9 on left is OOOIOII
+};
 
-    if(rightHand) {
-        canvas_set_color(canvas, ColorBlack);
-    } else {
-        canvas_set_color(canvas, ColorWhite);
-    }
-    canvas_draw_box(canvas, startingPosition, BARCODE_Y_START, 2, BARCODE_HEIGHT); //OO
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 2, BARCODE_Y_START, 2, BARCODE_HEIGHT); //II
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 4, BARCODE_Y_START, 2, BARCODE_HEIGHT); //OO
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 6, BARCODE_Y_START, 1, BARCODE_HEIGHT); //I
-}
-void number_2(
+void number(
     Canvas* canvas,
     bool rightHand,
-    int startingPosition) { //UPC Code for #2 on left is OOIOOII
-    canvas_set_color(canvas, ColorBlack);
-    canvas_draw_str(
-        canvas, startingPosition, BARCODE_Y_START + BARCODE_HEIGHT + BARCODE_TEXT_OFFSET, "2");
-    if(rightHand) {
-        canvas_set_color(canvas, ColorBlack);
-    } else {
-        canvas_set_color(canvas, ColorWhite);
-    }
-    canvas_draw_box(canvas, startingPosition, BARCODE_Y_START, 2, BARCODE_HEIGHT); //OO
+    int startingPosition
+    int number) {
+    int number_data = number_dict[number];
+    number_init(canvas, rightHand, startingPosition, (string)number);//TODO int -> String
+    canvas_draw_box(canvas, startingPosition, BARCODE_Y_START, number_data[1][0], BARCODE_HEIGHT);
     canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 2, BARCODE_Y_START, 1, BARCODE_HEIGHT); //I
+    canvas_draw_box(canvas, startingPosition + number_data[0][0], BARCODE_Y_START, number_data[1][1], BARCODE_HEIGHT);
     canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 3, BARCODE_Y_START, 2, BARCODE_HEIGHT); //OO
+    canvas_draw_box(canvas, startingPosition + number_data[0][1], BARCODE_Y_START, number_data[1][2], BARCODE_HEIGHT);
     canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 5, BARCODE_Y_START, 2, BARCODE_HEIGHT); //II
+    canvas_draw_box(canvas, startingPosition + number_data[0][2], BARCODE_Y_START, number_data[1][3], BARCODE_HEIGHT);
 }
-void number_3(
+
+void number_init(
     Canvas* canvas,
     bool rightHand,
-    int startingPosition) { //UPC Code for #3 on left is OIIIIOI
+    int startingPosition,
+    const char* number) {
     canvas_set_color(canvas, ColorBlack);
     canvas_draw_str(
-        canvas, startingPosition, BARCODE_Y_START + BARCODE_HEIGHT + BARCODE_TEXT_OFFSET, "3");
+        canvas, startingPosition, BARCODE_Y_START + BARCODE_HEIGHT + BARCODE_TEXT_OFFSET, number);
     if(rightHand) {
         canvas_set_color(canvas, ColorBlack);
     } else {
         canvas_set_color(canvas, ColorWhite);
     }
-    canvas_draw_box(canvas, startingPosition, BARCODE_Y_START, 1, BARCODE_HEIGHT); //O
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 1, BARCODE_Y_START, 4, BARCODE_HEIGHT); //IIII
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 5, BARCODE_Y_START, 1, BARCODE_HEIGHT); //O
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 6, BARCODE_Y_START, 1, BARCODE_HEIGHT); //I
-}
-void number_4(
-    Canvas* canvas,
-    bool rightHand,
-    int startingPosition) { //UPC Code for #4 on left is OIOOOII
-    canvas_set_color(canvas, ColorBlack);
-    canvas_draw_str(
-        canvas, startingPosition, BARCODE_Y_START + BARCODE_HEIGHT + BARCODE_TEXT_OFFSET, "4");
-    if(rightHand) {
-        canvas_set_color(canvas, ColorBlack);
-    } else {
-        canvas_set_color(canvas, ColorWhite);
-    }
-    canvas_draw_box(canvas, startingPosition, BARCODE_Y_START, 1, BARCODE_HEIGHT); //O
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 1, BARCODE_Y_START, 1, BARCODE_HEIGHT); //I
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 2, BARCODE_Y_START, 3, BARCODE_HEIGHT); //OOO
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 5, BARCODE_Y_START, 2, BARCODE_HEIGHT); //II
-}
-void number_5(
-    Canvas* canvas,
-    bool rightHand,
-    int startingPosition) { //UPC Code for #5 on left is OIIOOOI
-    canvas_set_color(canvas, ColorBlack);
-    canvas_draw_str(
-        canvas, startingPosition, BARCODE_Y_START + BARCODE_HEIGHT + BARCODE_TEXT_OFFSET, "5");
-    if(rightHand) {
-        canvas_set_color(canvas, ColorBlack);
-    } else {
-        canvas_set_color(canvas, ColorWhite);
-    }
-    canvas_draw_box(canvas, startingPosition, BARCODE_Y_START, 1, BARCODE_HEIGHT); //O
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 1, BARCODE_Y_START, 2, BARCODE_HEIGHT); //II
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 3, BARCODE_Y_START, 3, BARCODE_HEIGHT); //OOO
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 6, BARCODE_Y_START, 1, BARCODE_HEIGHT); //I
-}
-void number_6(
-    Canvas* canvas,
-    bool rightHand,
-    int startingPosition) { //UPC Code for #6 on left is OIOIIII
-    canvas_set_color(canvas, ColorBlack);
-    canvas_draw_str(
-        canvas, startingPosition, BARCODE_Y_START + BARCODE_HEIGHT + BARCODE_TEXT_OFFSET, "6");
-    if(rightHand) {
-        canvas_set_color(canvas, ColorBlack);
-    } else {
-        canvas_set_color(canvas, ColorWhite);
-    }
-    canvas_draw_box(canvas, startingPosition, BARCODE_Y_START, 1, BARCODE_HEIGHT); //O
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 1, BARCODE_Y_START, 1, BARCODE_HEIGHT); //I
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 2, BARCODE_Y_START, 1, BARCODE_HEIGHT); //O
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 3, BARCODE_Y_START, 4, BARCODE_HEIGHT); //IIII
-}
-void number_7(
-    Canvas* canvas,
-    bool rightHand,
-    int startingPosition) { //UPC Code for #7 on left is OIIIOII
-    canvas_set_color(canvas, ColorBlack);
-    canvas_draw_str(
-        canvas, startingPosition, BARCODE_Y_START + BARCODE_HEIGHT + BARCODE_TEXT_OFFSET, "7");
-    if(rightHand) {
-        canvas_set_color(canvas, ColorBlack);
-    } else {
-        canvas_set_color(canvas, ColorWhite);
-    }
-    canvas_draw_box(canvas, startingPosition, BARCODE_Y_START, 1, BARCODE_HEIGHT); //O
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 1, BARCODE_Y_START, 3, BARCODE_HEIGHT); //III
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 4, BARCODE_Y_START, 1, BARCODE_HEIGHT); //O
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 5, BARCODE_Y_START, 2, BARCODE_HEIGHT); //II
-}
-void number_8(
-    Canvas* canvas,
-    bool rightHand,
-    int startingPosition) { //UPC Code for #8 on left is OIIOIII
-    canvas_set_color(canvas, ColorBlack);
-    canvas_draw_str(
-        canvas, startingPosition, BARCODE_Y_START + BARCODE_HEIGHT + BARCODE_TEXT_OFFSET, "8");
-    if(rightHand) {
-        canvas_set_color(canvas, ColorBlack);
-    } else {
-        canvas_set_color(canvas, ColorWhite);
-    }
-    canvas_draw_box(canvas, startingPosition, BARCODE_Y_START, 1, BARCODE_HEIGHT); //O
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 1, BARCODE_Y_START, 2, BARCODE_HEIGHT); //II
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 3, BARCODE_Y_START, 1, BARCODE_HEIGHT); //O
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 4, BARCODE_Y_START, 3, BARCODE_HEIGHT); //III
-}
-void number_9(
-    Canvas* canvas,
-    bool rightHand,
-    int startingPosition) { //UPC Code for #9 on left is OOOIOII
-    canvas_set_color(canvas, ColorBlack);
-    canvas_draw_str(
-        canvas, startingPosition, BARCODE_Y_START + BARCODE_HEIGHT + BARCODE_TEXT_OFFSET, "9");
-    if(rightHand) {
-        canvas_set_color(canvas, ColorBlack);
-    } else {
-        canvas_set_color(canvas, ColorWhite);
-    }
-    canvas_draw_box(canvas, startingPosition, BARCODE_Y_START, 3, BARCODE_HEIGHT); //OOO
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 3, BARCODE_Y_START, 1, BARCODE_HEIGHT); //I
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 4, BARCODE_Y_START, 1, BARCODE_HEIGHT); //O
-    canvas_invert_color(canvas);
-    canvas_draw_box(canvas, startingPosition + 5, BARCODE_Y_START, 2, BARCODE_HEIGHT); //II
 }
 
 static void render_callback(Canvas* const canvas, void* ctx) {
@@ -298,38 +141,7 @@ static void render_callback(Canvas* const canvas, void* ctx) {
                     plugin_state->barcodeNumeral[11] = checkDigit;
                 }
             }
-            switch(plugin_state->barcodeNumeral[index]) {
-            case 0:
-                number_0(canvas, isOnRight, editingMarkerPosition[index]);
-                break;
-            case 1:
-                number_1(canvas, isOnRight, editingMarkerPosition[index]);
-                break;
-            case 2:
-                number_2(canvas, isOnRight, editingMarkerPosition[index]);
-                break;
-            case 3:
-                number_3(canvas, isOnRight, editingMarkerPosition[index]);
-                break;
-            case 4:
-                number_4(canvas, isOnRight, editingMarkerPosition[index]);
-                break;
-            case 5:
-                number_5(canvas, isOnRight, editingMarkerPosition[index]);
-                break;
-            case 6:
-                number_6(canvas, isOnRight, editingMarkerPosition[index]);
-                break;
-            case 7:
-                number_7(canvas, isOnRight, editingMarkerPosition[index]);
-                break;
-            case 8:
-                number_8(canvas, isOnRight, editingMarkerPosition[index]);
-                break;
-            case 9:
-                number_9(canvas, isOnRight, editingMarkerPosition[index]);
-                break;
-            }
+            number(canvas, isOnRight, editingMarkerPosition[index], plugin_state->barcodeNumeral[index]);
         }
 
         canvas_set_color(canvas, ColorBlack);
