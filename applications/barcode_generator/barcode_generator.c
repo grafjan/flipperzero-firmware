@@ -26,7 +26,7 @@ typedef struct {
     bool doParityCalculation; //Should do parity check?
 } PluginState;
 
-int number_dict = {
+int number_dict[][] = {
     //number: [[cumulatedSumOfDigits], [digitWidth]]
     [[3, 5, 6], [3, 2, 1, 1]], //UPC Code for #0 on left is OOOIIOI
     [[2, 4, 6], [2, 2, 2, 1]], //UPC Code for #1 on left is OOIIOOI
